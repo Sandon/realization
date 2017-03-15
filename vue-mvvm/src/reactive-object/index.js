@@ -28,6 +28,8 @@ export function defineReactive(obj, key, val) {
         return
       val = newVal
       childObj = convert(val)
+      console.log(dep)
+      debugger
       dep.notify()
     }
   })

@@ -1,0 +1,9 @@
+{
+  "name": "vue-mvvm",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "babel src/ -d dist; babel-node test/main.test.js",
+    "compile": "babel src/ -d dist",
+    "eslint": "eslint --fix --ext .js \"**\""
+  }
+}

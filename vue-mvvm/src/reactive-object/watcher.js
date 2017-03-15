@@ -1,6 +1,7 @@
 /**
  * Created by Sandon on 2017/3/4.
  */
+import Dep from './dep'
 export default class Watcher {
   constructor (vm, expOrFn, cb) {
     this.cb = cb
@@ -9,7 +10,10 @@ export default class Watcher {
     this.value = this.get()
   }
   get () {
-    return this.vm._data[this.expOrFn]
+    Dep.pushTarget(this)
+    const val = this.vm._data[this.expOrFn]
+    Dep.popTarget()
+    return val
   }
   update () {
     this.run()
