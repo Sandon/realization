@@ -12,6 +12,9 @@ export default class ReactiveObject {
   }
 }
 
+// add getter/setter for every key/value pair in object
+// in getter: collect the dependency relationships for data (watchers depend on data)
+// in setter: notify watchers to update when data changes
 export function defineReactive(obj, key, val) {
   let childObj = convert(val)
   const dep = new Dep()
@@ -28,8 +31,6 @@ export function defineReactive(obj, key, val) {
         return
       val = newVal
       childObj = convert(val)
-      console.log(dep)
-      debugger
       dep.notify()
     }
   })

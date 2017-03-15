@@ -12,9 +12,9 @@ const vm = new Vm({
 })
 vm.$watch('a', () => {
   console.log('watch success')
+  console.log(vm.a)
 })
 
 setTimeout(() => {
   vm.a = 5
-  console.log(vm)
 }, 1000)

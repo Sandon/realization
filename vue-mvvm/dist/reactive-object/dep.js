@@ -19,6 +19,10 @@ var Dep = function () {
 
     this.subs = [];
   }
+  // the current target watcher being evaluated.
+  // this is globally unique because there could be only one
+  // watcher being evaluated at any time.
+
 
   _createClass(Dep, [{
     key: "addSub",
@@ -31,7 +35,7 @@ var Dep = function () {
       // stablize the subscriber list first
       var subs = this.subs.slice();
       subs.forEach(function (sub) {
-        return sub.notify();
+        return sub.update();
       });
     }
   }]);

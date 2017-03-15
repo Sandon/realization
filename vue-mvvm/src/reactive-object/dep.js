@@ -2,6 +2,9 @@
  * Created by Sandon on 2017/3/4.
  */
 export default class Dep {
+  // the current target watcher being evaluated.
+  // this is globally unique because there could be only one
+  // watcher being evaluated at any time.
   static target = null
   static _targetStack = []
   static pushTarget = function (targetWatcher) {
@@ -22,6 +25,6 @@ export default class Dep {
   notify () {
     // stablize the subscriber list first
     const subs = this.subs.slice()
-    subs.forEach(sub => sub.notify())
+    subs.forEach(sub => sub.update())
   }
 }
