@@ -1,6 +1,10 @@
 /**
  * Created by Sandon on 2017/3/4.
  */
+/**
+ * A dep is an observable that can have multiple
+ * watchers(directives in template or watchers bound manually) subscribing to it.
+ */
 export default class Dep {
   // the current target watcher being evaluated.
   // this is globally unique because there could be only one
@@ -17,7 +21,6 @@ export default class Dep {
   
   subs = []
   constructor () {
-    // this.subs = []
   }
   addSub (sub) {
     this.subs.push(sub)

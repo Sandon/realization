@@ -7,6 +7,7 @@ export default class Watcher {
     this.cb = cb
     this.vm = vm
     this.expOrFn = expOrFn
+    // trigger getter function to be executed to collect dependency
     this.value = this.get()
   }
   get () {
