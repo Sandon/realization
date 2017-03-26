@@ -27,6 +27,22 @@ var ReactiveObject = function () {
     _classCallCheck(this, ReactiveObject);
 
     this.value = val;
+    // a Dep for the object self
+    this.dep = new _dep2.default();
+    Object.defineProperty(val, '__reactiveObject__', {
+      value: this,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    });
+    /*
+    // array is handled different from normal object
+    if (Array.isArray(val)) {
+      this.observeArray(val)
+    } else {
+      this.walk(val)
+    }
+    */
     this.walk(val);
   }
 
@@ -35,6 +51,13 @@ var ReactiveObject = function () {
     value: function walk(obj) {
       Object.keys(obj).forEach(function (key) {
         return defineReactive(obj, key, obj[key]);
+      });
+    }
+  }, {
+    key: 'observeArray',
+    value: function observeArray(arr) {
+      arr.forEach(function (item) {
+        return convert(item);
       });
     }
   }]);
@@ -50,12 +73,26 @@ var ReactiveObject = function () {
 exports.default = ReactiveObject;
 function defineReactive(obj, key, val) {
   var childObj = convert(val);
-  var dep = new _dep2.default();
+  var dep = new _dep2.default(); // a Dep for the key-value pair of object
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter() {
-      if (_dep2.default.target) dep.addSub(_dep2.default.target);
+      if (_dep2.default.target) {
+        // watcher depends on the key-value pair of the object
+        dep.addSub(_dep2.default.target);
+
+        // watcher depends on the value responding to the key.
+        // this will be used when manipulate a array (push,pop etc) or add/delete a property on object(array)
+        childObj && childObj.dep.addSub(_dep2.default.target);
+
+        // if the value responding to the key is a Array,
+        // dive into it to collect dependencies.
+        // but why? because when converting to ReactiveObject
+        // array is treated different from common object?
+        // Array.isArray(val) && dependArray(val)
+      }
+
       return val;
     },
     set: function reactiveSetter(newVal) {
@@ -67,8 +104,18 @@ function defineReactive(obj, key, val) {
   });
 }
 
+// convert a normal object to ReactiveObject
 function convert(val, vm) {
   if (!val || 'object' !== (typeof val === 'undefined' ? 'undefined' : _typeof(val))) return;
 
+  if (val.__reactiveObject__) return val.__reactiveObject__;
+
   return new ReactiveObject(val);
+}
+
+function dependArray(arr) {
+  arr.forEach(function (ele) {
+    ele && ele.__reactiveObject__ && ele.__reactiveObject__.dep.addSub(_dep2.default.target);
+    Array.isArray(ele) && dependArray(ele);
+  });
 }

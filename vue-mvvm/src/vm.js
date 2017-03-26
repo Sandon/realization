@@ -8,7 +8,7 @@ export default class Vm {
     this.$options = options
     this._data = this.$options.data
     this._proxy()
-    convert(this._data, this)
+    convert(this._data, this) // convert this._data to reactive
   }
   _proxy () {
     let  self = this

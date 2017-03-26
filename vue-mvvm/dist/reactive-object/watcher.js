@@ -13,6 +13,8 @@ var _dep = require('./dep');
 
 var _dep2 = _interopRequireDefault(_dep);
 
+var _util = require('../util');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -24,6 +26,7 @@ var Watcher = function () {
     this.cb = cb;
     this.vm = vm;
     this.expOrFn = expOrFn;
+    // trigger getter function to be executed to collect dependency
     this.value = this.get();
   }
 
@@ -31,7 +34,12 @@ var Watcher = function () {
     key: 'get',
     value: function get() {
       _dep2.default.pushTarget(this);
-      var val = this.vm._data[this.expOrFn];
+      var val = (0, _util.parsePath)(this.expOrFn)(this.vm._data);
+      /*let val
+      if ('b[2][0].z' === this.expOrFn)
+        val = this.vm._data.b[2][0].z
+      else
+        val = this.vm._data[this.expOrFn]*/
       _dep2.default.popTarget();
       return val;
     }

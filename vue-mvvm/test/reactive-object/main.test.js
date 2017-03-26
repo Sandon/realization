@@ -24,12 +24,12 @@ vm.$watch('a', () => {
   console.log('watch a success')
   console.log(vm.a)
 })
-/*vm.$watch('b[2][0].z', () => {
+vm.$watch('b[2][0].z', () => {
   console.log('watch b[2][0].z success')
   console.log(vm.b[2][0].z)
-})*/
+})
 
 setTimeout(() => {
   vm.a = 2
-  // vm.b[2][0].z = 'z2'
+  vm.b[2][0].z = 'z2'
 }, 1000)

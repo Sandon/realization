@@ -2,6 +2,8 @@
  * Created by Sandon on 2017/3/4.
  */
 import Dep from './dep'
+import {parsePath} from '../util'
+
 export default class Watcher {
   constructor (vm, expOrFn, cb) {
     this.cb = cb
@@ -12,7 +14,12 @@ export default class Watcher {
   }
   get () {
     Dep.pushTarget(this)
-    const val = this.vm._data[this.expOrFn]
+    const val = parsePath(this.expOrFn)(this.vm._data)
+    /*let val
+    if ('b[2][0].z' === this.expOrFn)
+      val = this.vm._data.b[2][0].z
+    else
+      val = this.vm._data[this.expOrFn]*/
     Dep.popTarget()
     return val
   }

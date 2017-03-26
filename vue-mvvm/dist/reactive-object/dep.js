@@ -11,10 +11,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * Created by Sandon on 2017/3/4.
  */
+/**
+ * A dep is an observable that can have multiple
+ * watchers(directives in template or watchers bound manually) subscribing to it.
+ */
 var Dep = function () {
   function Dep() {
-    // this.subs = []
-
     _classCallCheck(this, Dep);
 
     this.subs = [];

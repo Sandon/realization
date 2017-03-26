@@ -28,7 +28,7 @@ var Vm = function () {
     this.$options = options;
     this._data = this.$options.data;
     this._proxy();
-    (0, _reactiveObject.convert)(this._data, this);
+    (0, _reactiveObject.convert)(this._data, this); // convert this._data to reactive
   }
 
   _createClass(Vm, [{

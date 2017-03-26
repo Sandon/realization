@@ -15,11 +15,15 @@ export default class ReactiveObject {
       writable: true,
       configurable: true
     })
+    /*
+    // array is handled different from normal object
     if (Array.isArray(val)) {
       this.observeArray(val)
     } else {
       this.walk(val)
     }
+    */
+    this.walk(val)
   }
   walk (obj) {
     Object.keys(obj).forEach(key => defineReactive(obj, key, obj[key]))
@@ -44,14 +48,14 @@ export function defineReactive(obj, key, val) {
         dep.addSub(Dep.target)
         
         // watcher depends on the value responding to the key.
-        // this will be used when manipulate a array or add/delete a property on object
+        // this will be used when manipulate a array (push,pop etc) or add/delete a property on object(array)
         childObj && childObj.dep.addSub(Dep.target)
   
         // if the value responding to the key is a Array,
         // dive into it to collect dependencies.
-        // Because we can't convert a array into a reactive object by
-        // add getter/setter on it through Object.defineProperty
-        Array.isArray(val) &&  dependArray(val)
+        // but why? because when converting to ReactiveObject
+        // array is treated different from common object?
+        // Array.isArray(val) && dependArray(val)
       }
         
       return val
