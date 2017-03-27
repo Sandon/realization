@@ -25,9 +25,9 @@ export default class Dep {
   addSub (sub) {
     this.subs.push(sub)
   }
-  notify () {
+  notify (imperative) {
     // stablize the subscriber list first
     const subs = this.subs.slice()
-    subs.forEach(sub => sub.update())
+    subs.forEach(sub => sub.update(imperative))
   }
 }

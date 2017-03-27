@@ -33,11 +33,11 @@ var Dep = function () {
     }
   }, {
     key: "notify",
-    value: function notify() {
+    value: function notify(imperative) {
       // stablize the subscriber list first
       var subs = this.subs.slice();
       subs.forEach(function (sub) {
-        return sub.update();
+        return sub.update(imperative);
       });
     }
   }]);

@@ -4,13 +4,13 @@
 const originArrayProto = Array.prototype
 export const reactiveArrayProto = Object.create(originArrayProto)
   
-['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach(method => {
-  console.log(method)
+;['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse'].forEach(method => {
+  // console.log('method:' + method)
   const originMethod = originArrayProto[method]
   Object.defineProperty(reactiveArrayProto, method, {
     value: function () {
       const result = originMethod.apply(this, arguments)
-      this.__reactiveObject__.dep.notify()
+      this.__reactiveObject__.dep.notify(true)
       return result
     },
     enumerable: false,

@@ -18,6 +18,10 @@ var _dep = require('./dep');
 
 var _dep2 = _interopRequireDefault(_dep);
 
+var _util = require('../util');
+
+var _array = require('./array');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -35,6 +39,9 @@ var ReactiveObject = function () {
       writable: true,
       configurable: true
     });
+    if (Array.isArray(val)) {
+      (0, _util.augment)(val, _array.reactiveArrayProto);
+    }
     /*
     // array is handled different from normal object
     if (Array.isArray(val)) {

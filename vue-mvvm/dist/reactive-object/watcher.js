@@ -35,24 +35,19 @@ var Watcher = function () {
     value: function get() {
       _dep2.default.pushTarget(this);
       var val = (0, _util.parsePath)(this.expOrFn)(this.vm._data);
-      /*let val
-      if ('b[2][0].z' === this.expOrFn)
-        val = this.vm._data.b[2][0].z
-      else
-        val = this.vm._data[this.expOrFn]*/
       _dep2.default.popTarget();
       return val;
     }
   }, {
     key: 'update',
-    value: function update() {
-      this.run();
+    value: function update(imperative) {
+      this.run(imperative);
     }
   }, {
     key: 'run',
-    value: function run() {
+    value: function run(imperative) {
       var newVal = this.get();
-      if (this.value !== newVal) {
+      if (imperative || this.value !== newVal) {
         this.value = newVal;
         this.cb.call(this.vm);
       }

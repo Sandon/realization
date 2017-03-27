@@ -15,20 +15,15 @@ export default class Watcher {
   get () {
     Dep.pushTarget(this)
     const val = parsePath(this.expOrFn)(this.vm._data)
-    /*let val
-    if ('b[2][0].z' === this.expOrFn)
-      val = this.vm._data.b[2][0].z
-    else
-      val = this.vm._data[this.expOrFn]*/
     Dep.popTarget()
     return val
   }
-  update () {
-    this.run()
+  update (imperative) {
+    this.run(imperative)
   }
-  run () {
+  run (imperative) {
     const newVal = this.get()
-    if (this.value !== newVal) {
+    if (imperative || this.value !== newVal) {
       this.value = newVal
       this.cb.call(this.vm)
     }

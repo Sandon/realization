@@ -2,6 +2,9 @@
  * Created by Sandon on 2017/3/4.
  */
 import Dep from './dep'
+import {augment} from '../util'
+import {reactiveArrayProto} from './array'
+
 export default class ReactiveObject {
   value
   dep
@@ -15,6 +18,9 @@ export default class ReactiveObject {
       writable: true,
       configurable: true
     })
+    if (Array.isArray(val)) {
+      augment(val, reactiveArrayProto)
+    }
     /*
     // array is handled different from normal object
     if (Array.isArray(val)) {

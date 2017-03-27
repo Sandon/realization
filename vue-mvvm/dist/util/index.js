@@ -15,3 +15,15 @@ Object.keys(_lang).forEach(function (key) {
     }
   });
 });
+
+var _env = require('./env');
+
+Object.keys(_env).forEach(function (key) {
+  if (key === "default") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function get() {
+      return _env[key];
+    }
+  });
+});
