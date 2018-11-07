@@ -5,5 +5,10 @@
     "test": "babel src/ -d dist; babel-node test/main.test.js",
     "compile": "babel src/ -d dist",
     "eslint": "eslint --fix --ext .js \"**\""
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-3": "^6.24.1"
   }
 }

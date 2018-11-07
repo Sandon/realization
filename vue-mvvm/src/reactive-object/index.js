@@ -10,7 +10,7 @@ export default class ReactiveObject {
   dep
   constructor (val) {
     this.value = val
-    // a Dep for the object self
+    // a Dep for the object self when manipulate a array (push,pop etc) or add/delete a property on object(array)
     this.dep = new Dep()
     Object.defineProperty(val, '__reactiveObject__', {
       value: this,
@@ -22,7 +22,7 @@ export default class ReactiveObject {
       augment(val, reactiveArrayProto)
     }
     /*
-    // array is handled different from normal object
+    // array is handled different from normal object for performance
     if (Array.isArray(val)) {
       this.observeArray(val)
     } else {
