@@ -18,14 +18,15 @@ export default class Watcher {
     Dep.popTarget()
     return val
   }
-  update (imperative) {
-    this.run(imperative)
+  update () {
+    this.run()
   }
-  run (imperative) {
+  run () {
     const newVal = this.get()
-    if (imperative || this.value !== newVal) {
+    if (this.value !== newVal) {
+      const oldValue = this.value
       this.value = newVal
-      this.cb.call(this.vm)
+      this.cb && this.cb.call(this.vm, newVal, oldValue)
     }
   }
 }

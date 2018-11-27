@@ -10,7 +10,7 @@ export const reactiveArrayProto = Object.create(originArrayProto)
   Object.defineProperty(reactiveArrayProto, method, {
     value: function () {
       const result = originMethod.apply(this, arguments)
-      this.__reactiveObject__.dep.notify(true)
+      this.__reactiveObject__.dep.notify()
       return result
     },
     enumerable: false,

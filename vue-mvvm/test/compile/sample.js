@@ -4,9 +4,16 @@
 const template =
 `
 <div>
-  <p v-if="list.length">
-    {{list[list.length - 1]}}
-  </p>
+  <ul v-if="list.length">
+    <li v-for="item in list">abc{{item.name}}xyz</li>
+  </ul>
   <span v-else>列表为空</span>
 </div>
 `
+
+const data = {
+  list: [
+    {name: 'abc'},
+    {name: 'xyz'}
+  ]
+}

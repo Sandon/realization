@@ -2,9 +2,6 @@
  * Created by Sandon on 2017/5/2.
  */
 
-import { makeMap, no } from 'shared/util'
-import { isNonPhrasingTag } from 'web/compiler/util'
-
 // Regular Expressions for parsing tags and attributes
 const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/
 
@@ -13,17 +10,6 @@ const qnameCapture = `((?:${ncname}\\:)?${ncname})`
 const startTagOpen = new RegExp(`^<${qnameCapture}`)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
-
-const reCache = {}
-
-// #5992
-const isIgnoreNewlineTag = makeMap('pre,textarea', true)
-const shouldIgnoreFirstNewline = (tag, html) => tag && isIgnoreNewlineTag(tag) && html[0] === '\n'
-
-function decodeAttr (value, shouldDecodeNewlines) {
-  const re = shouldDecodeNewlines ? encodedAttrWithNewLines : encodedAttr
-  return value.replace(re, match => decodingMap[match])
-}
 
 export function parseHTML (html, options) {
   const stack = []
@@ -47,9 +33,6 @@ export function parseHTML (html, options) {
       const startTagMatch = parseStartTag()
       if (startTagMatch) {
         handleStartTag(startTagMatch)
-        if (shouldIgnoreFirstNewline(lastTag, html)) {
-          advance(1)
-        }
         continue
       }
     }
@@ -113,32 +96,14 @@ export function parseHTML (html, options) {
 
   function handleStartTag (match) {
     const tagName = match.tagName
-    const unarySlash = match.unarySlash
+    const unary = !!match.unarySlash
 
-    if (expectHTML) {
-      if (lastTag === 'p' && isNonPhrasingTag(tagName)) {
-        parseEndTag(lastTag)
-      }
-      if (canBeLeftOpenTag(tagName) && lastTag === tagName) {
-        parseEndTag(tagName)
-      }
-    }
-
-    const unary = isUnaryTag(tagName) || !!unarySlash
-
-    const l = match.attrs.length
-    const attrs = new Array(l)
-    for (let i = 0; i < l; i++) {
-      const args = match.attrs[i]
-      const value = args[3] || args[4] || args[5] || ''
-      const shouldDecodeNewlines = tagName === 'a' && args[1] === 'href'
-        ? options.shouldDecodeNewlinesForHref
-        : options.shouldDecodeNewlines
-      attrs[i] = {
+    const attrs = match.attrs.map((args) => {
+      return {
         name: args[1],
-        value: decodeAttr(value, shouldDecodeNewlines)
+        value: args[3] || args[4] || args[5] || ''
       }
-    }
+    })
 
     if (!unary) {
       stack.push({ tag: tagName, lowerCasedTag: tagName.toLowerCase(), attrs: attrs })
@@ -171,14 +136,6 @@ export function parseHTML (html, options) {
     if (pos >= 0) {
       // Close all the open elements, up the stack
       for (let i = stack.length - 1; i >= pos; i--) {
-        if (process.env.NODE_ENV !== 'production' &&
-          (i > pos || !tagName) &&
-          options.warn
-        ) {
-          options.warn(
-            `tag <${stack[i].tag}> has no matching end tag.`
-          )
-        }
         if (options.end) {
           options.end(stack[i].tag, start, end)
         }
@@ -187,17 +144,6 @@ export function parseHTML (html, options) {
       // Remove the open elements from the stack
       stack.length = pos
       lastTag = pos && stack[pos - 1].tag
-    } else if (lowerCasedTagName === 'br') {
-      if (options.start) {
-        options.start(tagName, [], true, start, end)
-      }
-    } else if (lowerCasedTagName === 'p') {
-      if (options.start) {
-        options.start(tagName, [], false, start, end)
-      }
-      if (options.end) {
-        options.end(tagName, start, end)
-      }
     }
   }
 }
