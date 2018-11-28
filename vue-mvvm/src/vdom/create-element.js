@@ -31,12 +31,3 @@ function normalizeChildren (children) {
     })
   }
 }
-
-function normalizeArrayChildren (children) {
-  return children.map((child) => {
-    if (isPrimitive(child)) {
-      return new VNode(undefined, undefined, undefined, String(child))
-    }
-    return child
-  })
-}
