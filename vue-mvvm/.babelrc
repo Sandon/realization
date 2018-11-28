@@ -1,4 +1,10 @@
 {
-  "presets": ["es2015", "stage-3"],
-  "plugins": ["transform-async-to-generator", "transform-class-properties"]
+  "presets": [
+    [
+      "env", {
+        "targets": { "chrome": "52" }
+      }
+    ]
+  ],
+  "plugins": ["@babel/plugin-proposal-class-properties"]
 }

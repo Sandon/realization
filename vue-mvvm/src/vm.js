@@ -5,8 +5,9 @@ import Watcher from './reactive-object/watcher'
 import { convert } from './reactive-object'
 import { compile } from './compiler/index'
 import VNode from './vdom/vnode'
+import { createElement } from './vdom/create-element'
 
-export default class Vm {
+class Vm {
   constructor (options = {}) {
     this.$options = options
     this._data = this.$options.data
@@ -36,8 +37,8 @@ export default class Vm {
     this.$el = el
 
     // convert template to render function
-    const { render } = compile(this.$options.template)
-    this.$options.render = render
+    // const { render } = compile(this.$options.template)
+    // this.$options.render = render
 
     // render to vnode tree, patch and add watcher
     const updateComponent = () => {
@@ -49,13 +50,8 @@ export default class Vm {
       this._isMounted = true
     }
   }
-  $createElement (context, tag, data, children) {
-    let vnode
-    if (typeof tag === 'string') {
-      vnode = new VNode(tag, data, children, undefined, undefined, context)
-    }
-
-    return vnode
+  $createElement (tag, data, children) {
+    return createElement(this, tag, data, children)
   }
   _render () {
     const vm = this
@@ -72,12 +68,61 @@ export default class Vm {
     const prevVnode = vm._vnode
     vm._vnode = vnode
     if (!prevVnode) {
+      // first render
       vm.$el = vm.__patch__(vm.$el, vnode)
     } else {
+      // update
       vm.$el = vm.__patch__(prevVnode, vnode)
     }
   }
   __patch__ (oldVnode, vnode) {
-    const isRealElement = oldVnode.nodeType
+    const insertedVnodeQueue = []
+    const isRealElement = oldVnode.nodeType !== undefined
+    if (isRealElement) {
+      oldVnode = new VNode(oldVnode.tagName.toLowerCase(), {}, [], undefined, oldVnode)
+    }
+    const oldElm = oldVnode.elm
+    const parentElm = oldElm.parentElement
+
+    // create whole dom tree recursively
+    createElm(vnode, insertedVnodeQueue, parentElm, oldElm.nextSibling)
+
+    // remove old dom
+    parentElm && parentElm.removeChild(oldVnode.elm)
+
+    return vnode.elm
   }
+}
+function createElm (vnode, insertedVnodeQueue, parentElm, refElm) {
+  const data = vnode.data
+  const children = vnode.children
+  const tag = vnode.tag
+
+  if (tag) {
+    vnode.elm = document.createElement(tag)
+    createChildren(vnode, children, insertedVnodeQueue)
+    parentElm.insertBefore(vnode.elm, refElm)
+  } else {
+    vnode.elm = document.createTextNode(vnode.text)
+    parentElm.insertBefore(vnode.elm, refElm)
+  }
+}
+
+function createChildren (vnode, children, insertedVnodeQueue) {
+  const type = typeof vnode.text
+  if (Array.isArray(children)) {
+    children.forEach((child, index) => {
+      createElm(child, insertedVnodeQueue, vnode.elm, null)
+    })
+  } else if (type === 'string' || type === 'number' || type === 'boolean') {
+    vnode.elm.appendChild(document.createTextNode(String(vnode.text)))
+  }
+}
+
+export default Vm
+
+if (typeof window !== 'undefined') {
+  window['Vm'] = Vm
+} else {
+  console.log('server')
 }

@@ -8,13 +8,13 @@ export default class Watcher {
   constructor (vm, expOrFn, cb) {
     this.cb = cb
     this.vm = vm
-    this.expOrFn = expOrFn
+    this.getter = typeof expOrFn === 'function' ? expOrFn : parsePath(expOrFn)
     // trigger getter function to be executed to collect dependency
     this.value = this.get()
   }
   get () {
     Dep.pushTarget(this)
-    const val = parsePath(this.expOrFn)(this.vm._data)
+    const val = this.getter.call(this.vm, this.vm) // parsePath(this.expOrFn)(this.vm._data)
     Dep.popTarget()
     return val
   }

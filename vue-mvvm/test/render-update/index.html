@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>render-update</title>
+  <script src="../../dist/vm.js"></script>
+</head>
+<body>
+<div id="app">haha</div>
+<script>
+  const vm = new Vm ({
+    data: {
+      a: 1
+    },
+    render: function (h) {
+      // const vnode = {
+      //   tag: 'div',
+      //   data: {},
+      //   children: [
+      //     {
+      //       tag: 'p',
+      //       data: {},
+      //       children: [
+      //         {text: this.a}
+      //       ]
+      //     }
+      //   ]
+      // }
+      const vnode = h('div', {}, [
+        h('p', {}, [this.a])
+      ])
+      return vnode
+    }
+  })
+  vm.$mount('#app')
+  setTimeout(function () {
+    vm.a = 2
+  }, 500)
+
+</script>
+</body>
+</html>

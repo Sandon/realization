@@ -7,7 +7,8 @@ export function parsePath(path) {
   // case like: b[0][2].z[0].w
   const segments = path.split(/[\[\]\.]/).filter(ele => ele !== "")
   const len = segments.length
-  return function (obj) {
+  return function (vm) {
+    let obj = vm._data
     for (let i = 0; i !== len; i++) {
       if (!obj) return
       obj = obj[segments[i]]
