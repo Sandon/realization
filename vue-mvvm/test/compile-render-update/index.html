@@ -17,7 +17,7 @@
 </div>
 `
   console.log(tmpl)
-  tmpl = tmpl.replace(/\r\n/g, '')
+  tmpl = tmpl.replace(/(\n|\r|\s)+/g, ' ')
   console.log(tmpl)
   const vm = new Vm ({
     data: {
