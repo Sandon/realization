@@ -4,8 +4,9 @@
 import Watcher from './reactive-object/watcher'
 import { convert } from './reactive-object'
 import { compile } from './compiler/index'
-import VNode from './vdom/vnode'
+import VNode, { createTextVNode } from './vdom/vnode'
 import { createElement } from './vdom/create-element'
+import { isObject, toString } from './util/index'
 
 class Vm {
   constructor (options = {}) {
@@ -37,8 +38,10 @@ class Vm {
     this.$el = el
 
     // convert template to render function
-    // const { render } = compile(this.$options.template)
-    // this.$options.render = render
+    if (!this.$options.render) {
+      const { render } = compile(this.$options.template)
+      this.$options.render = render
+    }
 
     // render to vnode tree, patch and add watcher
     const updateComponent = () => {
@@ -49,9 +52,6 @@ class Vm {
     if (this.$vnode == null) {
       this._isMounted = true
     }
-  }
-  $createElement (tag, data, children) {
-    return createElement(this, tag, data, children)
   }
   _render () {
     const vm = this
@@ -91,6 +91,41 @@ class Vm {
     parentElm && parentElm.removeChild(oldVnode.elm)
 
     return vnode.elm
+  }
+
+  // render helpers
+  $createElement (tag, data, children) {
+    return createElement(this, tag, data, children)
+  }
+  _c (tag, data, children) {
+    return createElement(this, tag, data, children)
+  }
+  _l (val, renderFn) {
+    let ret
+    if (Array.isArray(val) || typeof val === 'string') {
+      ret = new Array(val.length)
+      for (let i = 0, l = val.length; i < l; i++) {
+        ret[i] = renderFn(val[i], i)
+      }
+    } else if (typeof val === 'number') {
+      ret = new Array(val)
+      for (let i = 0; i < val; i++) {
+        ret[i] = renderFn(i + 1, i)
+      }
+    } else if (isObject(val)) {
+      let keys = Object.keys(val)
+      ret = new Array(keys.length)
+      for (let i = 0, l = keys.length; i < l; i++) {
+        const key = keys[i]
+        ret[i] = renderFn(val[key], key, i)
+      }
+    }
+    return ret
+  }
+  _v = createTextVNode
+  _s = toString
+  _e () {
+    return createTextVNode('')
   }
 }
 function createElm (vnode, insertedVnodeQueue, parentElm, refElm) {

@@ -1,7 +1,7 @@
 /**
  * Created by Sandon on 2017/5/2.
  */
-import { parseHtml } from './html-parser'
+import parseHtml from './html-parser.js'
 import {getAndRemoveAttr} from '../helper'
 export function parse(template) {
   let root
@@ -24,7 +24,11 @@ export function parse(template) {
       }
 
       if (currentParent) {
-        currentParent.children.push(element)
+        if (element.elseif || element.else) {
+          // nothing
+        } else {
+          currentParent.children.push(element)
+        }
       }
 
       if (!unary) {
@@ -99,17 +103,20 @@ function parseFor (exp) {
 function processIf (el, parent) {
   let exp
   if (exp = getAndRemoveAttr(el, 'v-if')) {
+    el.if = true
     addIfCondition(el, {
       exp: exp,
       block: el
     })
   } else if (exp = getAndRemoveAttr(el, 'v-else-if')) {
+    el.elseif = true
     const prev = findPrevElement( parent.children)
     prev && addIfCondition(prev, {
       exp: exp,
       block: el
     })
-  } else if (exp = getAndRemoveAttr(el, 'v-else')) {
+  } else if ((exp = getAndRemoveAttr(el, 'v-else')) !== undefined) {
+    el.else = true
     const prev = findPrevElement( parent.children)
     prev && addIfCondition(prev, {
       exp: exp,

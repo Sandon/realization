@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>compile-render-update</title>
+  <script src="../../dist/vm.js"></script>
+</head>
+<body>
+<div id="app">haha</div>
+<script>
+  let tmpl =
+`<div>
+  <ul v-if="showList">
+    <li v-for="(item, index) in list">{{index}}: 1 {{item.name}} 2</li>
+  </ul>
+  <span v-else>列表为空</span>
+</div>
+`
+  console.log(tmpl)
+  tmpl = tmpl.replace(/\r\n/g, '')
+  console.log(tmpl)
+  const vm = new Vm ({
+    data: {
+      showList: true,
+      list: [
+        {name: 'abc'},
+        {name: 'xyz'}
+      ]
+    },
+    template:tmpl
+  })
+  vm.$mount('#app')
+  setTimeout(function () {
+  }, 500)
+
+</script>
+</body>
+</html>

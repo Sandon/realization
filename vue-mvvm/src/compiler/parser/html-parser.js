@@ -11,7 +11,7 @@ const startTagOpen = new RegExp(`^<${qnameCapture}`)
 const startTagClose = /^\s*(\/?)>/
 const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
 
-export function parseHTML (html, options) {
+export default function parseHTML (html, options) {
   const stack = []
   let index = 0 // relative to original html string
   let last, lastTag

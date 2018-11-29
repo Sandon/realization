@@ -27,7 +27,12 @@
       //   ]
       // }
       const vnode = h('div', {}, [
-        h('p', {}, [this.a])
+        h('p', {}, [
+          this.a,
+          ...[
+            h('span', {}, 'xx')
+          ]
+        ])
       ])
       return vnode
     }
